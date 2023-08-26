@@ -54,7 +54,7 @@ class TestAmenityDocs(unittest.TestCase):
     def test_file_is_executable(self):
         """... tests if file has correct permissions so user can execute"""
         file_stat = stat('models/amenity.py')
-        permissions = str(oct(file_stat[0]))
+        permissions = oct(file_stat[0])
         actual = int(permissions[5:-2]) >= 5
         self.assertTrue(actual)
 
@@ -82,11 +82,8 @@ class TestAmenityInstances(unittest.TestCase):
         """... checks if BaseModel is properly casted to string"""
         my_str = str(self.amenity)
         my_list = ['Amenity', 'id', 'created_at']
-        actual = 0
-        for sub_str in my_list:
-            if sub_str in my_str:
-                actual += 1
-        self.assertTrue(3 == actual)
+        actual = sum(1 for sub_str in my_list if sub_str in my_str)
+        self.assertTrue(actual == 3)
 
     @unittest.skipIf(STORAGE_TYPE == 'db', 'skip if environ is db')
     def test_instantiation_no_updated(self):
@@ -95,7 +92,7 @@ class TestAmenityInstances(unittest.TestCase):
         actual = 0
         if 'updated_at' in my_str:
             actual += 1
-        self.assertTrue(0 == actual)
+        self.assertTrue(actual == 0)
 
     @unittest.skipIf(STORAGE_TYPE == 'db', 'skip if environ is db')
     def test_updated_at(self):
@@ -114,7 +111,7 @@ class TestAmenityInstances(unittest.TestCase):
             serialized = json.dumps(self.amenity_json)
         except:
             actual = 0
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     @unittest.skipIf(STORAGE_TYPE == 'db', 'skip if environ is db')
     def test_json_class(self):
@@ -129,10 +126,7 @@ class TestAmenityInstances(unittest.TestCase):
     def test_amenity_attribute(self):
         """... add amenity attribute"""
         self.amenity.name = "greatWifi"
-        if hasattr(self.amenity, 'name'):
-            actual = self.amenity.name
-        else:
-            actual = ''
+        actual = self.amenity.name if hasattr(self.amenity, 'name') else ''
         expected = "greatWifi"
         self.assertEqual(expected, actual)
 

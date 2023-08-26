@@ -11,11 +11,10 @@ def do_pack():
         generates a .tgz archine from contents of web_static
     """
     time = datetime.utcnow().strftime('%Y%m%d%H%M%S')
-    file_name = "versions/web_static_{}.tgz".format(time)
+    file_name = f"versions/web_static_{time}.tgz"
     try:
         local("mkdir -p ./versions")
-        local("tar --create --verbose -z --file={} ./web_static"
-              .format(file_name))
+        local(f"tar --create --verbose -z --file={file_name} ./web_static")
         return file_name
     except:
         return None

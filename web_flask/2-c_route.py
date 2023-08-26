@@ -27,6 +27,6 @@ def text_var(text):
     """
         function to display text variable passed in
     """
-    return "C {}".format(text.replace("_", " "))
+    return f'C {text.replace("_", " ")}'
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=5000)

@@ -42,7 +42,7 @@ class TestPythonRouteDocs(unittest.TestCase):
     def test_file_is_executable(self):
         """... tests if file has correct permissions so user can execute"""
         file_stat = stat('web_flask/3-python_route.py')
-        permissions = str(oct(file_stat[0]))
+        permissions = oct(file_stat[0])
         actual = int(permissions[5:-2]) >= 5
         self.assertTrue(actual)
 

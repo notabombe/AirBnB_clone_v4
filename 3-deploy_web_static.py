@@ -17,11 +17,10 @@ def do_pack():
         generates a .tgz archine from contents of web_static
     """
     time = datetime.utcnow().strftime('%Y%m%d%H%M%S')
-    file_name = "versions/web_static_{}.tgz".format(time)
+    file_name = f"versions/web_static_{time}.tgz"
     try:
         local("mkdir -p ./versions")
-        local("tar --create --verbose -z --file={} ./web_static"
-              .format(file_name))
+        local(f"tar --create --verbose -z --file={file_name} ./web_static")
         return file_name
     except:
         return None
@@ -36,19 +35,16 @@ def do_deploy(archive_path):
     try:
         archive = archive_path.split("/")[-1]
         path = "/data/web_static/releases"
-        put("{}".format(archive_path), "/tmp/{}".format(archive))
+        put(f"{archive_path}", f"/tmp/{archive}")
         folder = archive.split(".")
-        run("mkdir -p {}/{}/".format(path, folder[0]))
+        run(f"mkdir -p {path}/{folder[0]}/")
         new_archive = '.'.join(folder)
-        run("tar -xzf /tmp/{} -C {}/{}/"
-            .format(new_archive, path, folder[0]))
-        run("rm /tmp/{}".format(archive))
-        run("mv {}/{}/web_static/* {}/{}/"
-            .format(path, folder[0], path, folder[0]))
-        run("rm -rf {}/{}/web_static".format(path, folder[0]))
+        run(f"tar -xzf /tmp/{new_archive} -C {path}/{folder[0]}/")
+        run(f"rm /tmp/{archive}")
+        run(f"mv {path}/{folder[0]}/web_static/* {path}/{folder[0]}/")
+        run(f"rm -rf {path}/{folder[0]}/web_static")
         run("rm -rf /data/web_static/current")
-        run("ln -sf {}/{} /data/web_static/current"
-            .format(path, folder[0]))
+        run(f"ln -sf {path}/{folder[0]} /data/web_static/current")
         return True
     except:
         return False
@@ -61,6 +57,4 @@ def deploy():
     global created_path
     if created_path is None:
         created_path = do_pack()
-    if created_path is None:
-        return False
-    return do_deploy(created_path)
+    return False if created_path is None else do_deploy(created_path)

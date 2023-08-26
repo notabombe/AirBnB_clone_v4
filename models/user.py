@@ -34,8 +34,7 @@ class User(BaseModel, Base):
             instantiates user object
         """
         if kwargs:
-            pwd = kwargs.pop('password', None)
-            if pwd:
+            if pwd := kwargs.pop('password', None):
                 User.__set_password(self, pwd)
         super().__init__(*args, **kwargs)
 

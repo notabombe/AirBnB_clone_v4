@@ -54,7 +54,7 @@ class TestCityDocs(unittest.TestCase):
     def test_file_is_executable(self):
         """... tests if file has correct permissions so user can execute"""
         file_stat = stat('models/city.py')
-        permissions = str(oct(file_stat[0]))
+        permissions = oct(file_stat[0])
         actual = int(permissions[5:-2]) >= 5
         self.assertTrue(actual)
 
@@ -82,11 +82,8 @@ class TestCityInstances(unittest.TestCase):
         """... checks if BaseModel is properly casted to string"""
         my_str = str(self.city)
         my_list = ['City', 'id', 'created_at']
-        actual = 0
-        for sub_str in my_list:
-            if sub_str in my_str:
-                actual += 1
-        self.assertTrue(3 == actual)
+        actual = sum(1 for sub_str in my_list if sub_str in my_str)
+        self.assertTrue(actual == 3)
 
     @unittest.skipIf(STORAGE_TYPE == 'db', 'skip if environ is db')
     def test_instantiation_no_updated(self):
@@ -96,7 +93,7 @@ class TestCityInstances(unittest.TestCase):
         actual = 0
         if 'updated_at' in my_str:
             actual += 1
-        self.assertTrue(0 == actual)
+        self.assertTrue(actual == 0)
 
     @unittest.skipIf(STORAGE_TYPE == 'db', 'skip if environ is db')
     def test_updated_at(self):
@@ -115,25 +112,20 @@ class TestCityInstances(unittest.TestCase):
             serialized = json.dumps(self.city_json)
         except:
             actual = 0
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     @unittest.skipIf(STORAGE_TYPE == 'db', 'skip if environ is db')
     def test_json_class(self):
         """... to_json should include class key with value City"""
         self.city_json = self.city.to_json()
-        actual = None
-        if self.city_json['__class__']:
-            actual = self.city_json['__class__']
+        actual = self.city_json['__class__'] if self.city_json['__class__'] else None
         expected = 'City'
         self.assertEqual(expected, actual)
 
     def test_state_attribute(self):
         """... add state attribute"""
         self.city.state_id = 'IL'
-        if hasattr(self.city, 'state_id'):
-            actual = self.city.state_id
-        else:
-            actual = ''
+        actual = self.city.state_id if hasattr(self.city, 'state_id') else ''
         expected = 'IL'
         self.assertEqual(expected, actual)
 

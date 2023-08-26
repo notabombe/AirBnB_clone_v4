@@ -83,11 +83,11 @@ class BaseModel:
         """
             updates the basemodel and sets the correct attributes
         """
-        IGNORE = [
-            'id', 'created_at', 'updated_at', 'email',
-            'state_id', 'user_id', 'city_id', 'place_id'
-        ]
         if attr_dict:
+            IGNORE = [
+                'id', 'created_at', 'updated_at', 'email',
+                'state_id', 'user_id', 'city_id', 'place_id'
+            ]
             updated_dict = {
                 k: v for k, v in attr_dict.items() if k not in IGNORE
             }
@@ -113,9 +113,7 @@ class BaseModel:
             for k, v in self.__dict__.items()
         }
         bm_dict.pop('_sa_instance_state', None)
-        bm_dict.update({
-            '__class__': obj_class
-            })
+        bm_dict['__class__'] = obj_class
         if not saving_file_storage and obj_class == 'User':
             bm_dict.pop('password', None)
         return(bm_dict)
@@ -125,7 +123,7 @@ class BaseModel:
             returns string type representation of object instance
         """
         class_name = type(self).__name__
-        return '[{}] ({}) {}'.format(class_name, self.id, self.__dict__)
+        return f'[{class_name}] ({self.id}) {self.__dict__}'
 
     def delete(self):
         """

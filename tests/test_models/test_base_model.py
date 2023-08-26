@@ -54,7 +54,7 @@ class TestBaseModelDocs(unittest.TestCase):
     def test_file_is_executable(self):
         """... tests if file has correct permissions so user can execute"""
         file_stat = stat('models/base_model.py')
-        permissions = str(oct(file_stat[0]))
+        permissions = oct(file_stat[0])
         actual = int(permissions[5:-2]) >= 5
         self.assertTrue(actual)
 
@@ -82,21 +82,15 @@ class TestBaseModelInstances(unittest.TestCase):
         """... checks if BaseModel is properly casted to string"""
         my_str = str(self.model)
         my_list = ['BaseModel', 'id', 'created_at']
-        actual = 0
-        for sub_str in my_list:
-            if sub_str in my_str:
-                actual += 1
-        self.assertTrue(3 == actual)
+        actual = sum(1 for sub_str in my_list if sub_str in my_str)
+        self.assertTrue(actual == 3)
 
     def test_to_string(self):
         """... checks if BaseModel is properly casted to string"""
         my_str = str(self.model)
         my_list = ['BaseModel', 'id', 'created_at']
-        actual = 0
-        for sub_str in my_list:
-            if sub_str in my_str:
-                actual += 1
-        self.assertTrue(3 == actual)
+        actual = sum(1 for sub_str in my_list if sub_str in my_str)
+        self.assertTrue(actual == 3)
 
     def test_instantiation_no_updated(self):
         """... should not have updated attribute"""
@@ -104,7 +98,7 @@ class TestBaseModelInstances(unittest.TestCase):
         actual = 0
         if 'updated_at' in my_str:
             actual += 1
-        self.assertTrue(0 == actual)
+        self.assertTrue(actual == 0)
 
     def test_save(self):
         """... save function should add updated_at attribute"""
@@ -121,14 +115,12 @@ class TestBaseModelInstances(unittest.TestCase):
             serialized = json.dumps(my_model_json)
         except:
             actual = 0
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     def test_json_class(self):
         """... to_json should include class key with value BaseModel"""
         my_model_json = self.model.to_json()
-        actual = None
-        if my_model_json['__class__']:
-            actual = my_model_json['__class__']
+        actual = my_model_json['__class__'] if my_model_json['__class__'] else None
         expected = 'BaseModel'
         self.assertEqual(expected, actual)
 
@@ -143,7 +135,7 @@ class TestBaseModelInstances(unittest.TestCase):
         """... add number attribute"""
         self.model.number = 98
         actual = self.model.number
-        self.assertTrue(98 == actual)
+        self.assertTrue(actual == 98)
 
 if __name__ == '__main__':
     """

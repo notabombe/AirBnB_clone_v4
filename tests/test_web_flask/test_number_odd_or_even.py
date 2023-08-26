@@ -43,7 +43,7 @@ class TestNumOddEvenDocs(unittest.TestCase):
     def test_file_is_executable(self):
         """... tests if file has correct permissions so user can execute"""
         file_stat = stat('web_flask/6-number_odd_or_even.py')
-        permissions = str(oct(file_stat[0]))
+        permissions = oct(file_stat[0])
         actual = int(permissions[5:-2]) >= 5
         self.assertTrue(actual)
 

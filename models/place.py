@@ -62,10 +62,7 @@ class Place(BaseModel, Base):
             """
                 getter for amenitiess list, i.e. amenities attribute of self
             """
-            if len(self.amenity_ids) > 0:
-                return amenity_ids
-            else:
-                return None
+            return amenity_ids if len(self.amenity_ids) > 0 else None
 
         @amenities.setter
         def amenities(self, amenity_obj):
@@ -80,10 +77,7 @@ class Place(BaseModel, Base):
             """
                 getter for reviews list, i.e. reviews attribute of self
             """
-            if len(self.review_ids) > 0:
-                return review_ids
-            else:
-                return None
+            return review_ids if len(self.review_ids) > 0 else None
 
         @reviews.setter
         def reviews(self, review_obj):

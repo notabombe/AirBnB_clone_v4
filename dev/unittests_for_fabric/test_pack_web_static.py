@@ -43,7 +43,7 @@ class TestPackWebStaticDocs(unittest.TestCase):
     def test_file_is_executable(self):
         """... tests if file has correct permissions so user can execute"""
         file_stat = stat('1-pack_web_static.py')
-        permissions = str(oct(file_stat[0]))
+        permissions = oct(file_stat[0])
         self.assertEqual(permissions[5:], "775")
 
 

@@ -78,7 +78,7 @@ class TestHBNBcmdDocs(unittest.TestCase):
     def test_file_is_executable(self):
         """... tests if file has correct permissions so user can execute"""
         file_stat = stat('console.py')
-        permissions = str(oct(file_stat[0]))
+        permissions = oct(file_stat[0])
         actual = int(permissions[5:-2]) >= 5
         self.assertTrue(actual)
 
@@ -214,19 +214,12 @@ class TestHBNBcmdCreateDB(unittest.TestCase):
                           'last_name="a_last_name" ')
         cls.test_user_id = std_out.getvalue()[:-1]
         with redirect_streams() as (std_out, std_err):
-            CLI.do_create('City '
-                          'state_id="{}" '
-                          'name="SanFrancisco"'.format(cls.test_state_id))
+            CLI.do_create(f'City state_id="{cls.test_state_id}" name="SanFrancisco"')
         cls.test_city_id = std_out.getvalue()[:-1]
         with redirect_streams() as (std_out, std_err):
-            CLI.do_create('Place '
-                          'city_id="{}" '
-                          'user_id="{}" '
-                          'name="A_humble_home" '
-                          'number_rooms=4 '
-                          'number_bathrooms=2 '
-                          'max_guest=10'.format(cls.test_city_id,
-                                                cls.test_user_id))
+            CLI.do_create(
+                f'Place city_id="{cls.test_city_id}" user_id="{cls.test_user_id}" name="A_humble_home" number_rooms=4 number_bathrooms=2 max_guest=10'
+            )
         cls.test_place_id = std_out.getvalue()[:-1]
         print('... done creating')
         storage_objs = storage.all()
@@ -394,14 +387,14 @@ class TestHBNBcmdFunc(unittest.TestCase):
 
     def test_attr_name(self):
         """... checks if proper parameter for name was created"""
-        self.CLI.do_update('State {} healthy "Broccoli"'.format(self.obj.id))
+        self.CLI.do_update(f'State {self.obj.id} healthy "Broccoli"')
         actual = self.obj.healthy
         expected = 'Broccoli'
         self.assertEqual(expected, actual)
 
     def test_destroy(self):
         """... checks if object can be destroyed"""
-        self.CLI.do_destroy('State {}'.format(self.obj.id))
+        self.CLI.do_destroy(f'State {self.obj.id}')
         try:
             self.obj
             self.assertTrue(False)
@@ -448,7 +441,7 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
 
     def test_attr_update(self):
         """... checks if proper parameter for name was created"""
-        self.CLI.do_State('.update("{}", "db", "Mongo")'.format(self.obj.id))
+        self.CLI.do_State(f'.update("{self.obj.id}", "db", "Mongo")')
         new_objs = storage.all()
         for obj in new_objs.values():
             if obj.id == self.obj.id:
@@ -470,7 +463,7 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
 
     def test_attr_reupdate(self):
         """... checks if attribute can be reupdated"""
-        self.CLI.do_State('.update("{}", "roger", 55)'.format(self.obj.id))
+        self.CLI.do_State(f'.update("{self.obj.id}", "roger", 55)')
         actual = self.obj.roger
         expected = 55
         self.assertEqual(expected, actual)
@@ -478,7 +471,7 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
 
     def test_destroy(self):
         """... checks if object can be destroyed"""
-        self.CLI.do_destroy('State {}'.format(self.obj2.id))
+        self.CLI.do_destroy(f'State {self.obj2.id}')
         try:
             self.obj2
             self.assertTrue(False)
@@ -502,7 +495,7 @@ class TestHBNBcmdCount(unittest.TestCase):
         storage.delete_all()
         cls.cli = HBNBCommand()
         for k in CNC.keys():
-            print('...creating new {} object: '.format(k), end='')
+            print(f'...creating new {k} object: ', end='')
             cls.cli.do_create(k)
         print('')
         cls.storage_objs = storage.all()
@@ -514,8 +507,8 @@ class TestHBNBcmdCount(unittest.TestCase):
 
     def test_create_all(self):
         """... tests creation of 1 instance of all classes"""
-        check1 = set(v_class for v_class in CNC.values())
-        check2 = set(type(v_obj) for v_obj in self.storage_objs.values())
+        check1 = set(CNC.values())
+        check2 = {type(v_obj) for v_obj in self.storage_objs.values()}
         self.assertEqual(check1, check2)
 
     def test_count_BM(self):
@@ -591,12 +584,11 @@ class TestHBNBcmdAll(unittest.TestCase):
         storage.delete_all()
         cls.cli = HBNBCommand()
         for k in CNC.keys():
-            print('...creating new {} object: '.format(k), end='')
+            print(f'...creating new {k} object: ', end='')
             cls.cli.do_create(k)
         print('')
         cls.storage_objs = storage.all()
-        cls.all_ids = list(v.id for v in
-                           TestHBNBcmdAll.storage_objs.values())
+        cls.all_ids = [v.id for v in TestHBNBcmdAll.storage_objs.values()]
 
     def setUp(self):
         """initializes new HBNBCommand instance & storage obj for each test"""

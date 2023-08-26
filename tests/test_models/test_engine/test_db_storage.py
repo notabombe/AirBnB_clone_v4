@@ -59,7 +59,7 @@ class TestDBStorageDocs(unittest.TestCase):
     def test_file_is_executable(self):
         """... tests if file has correct permissions so user can execute"""
         file_stat = stat('models/engine/db_storage.py')
-        permissions = str(oct(file_stat[0]))
+        permissions = oct(file_stat[0])
         actual = int(permissions[5:-2]) >= 5
         self.assertTrue(actual)
 
@@ -160,37 +160,24 @@ class TestStateDBInstances(unittest.TestCase):
         all_objs = storage.all()
         all_state_objs = storage.all('State')
 
-        exist_in_all = False
-        for k in all_objs.keys():
-            if self.state.id in k:
-                exist_in_all = True
-        exist_in_all_states = False
-        for k in all_state_objs.keys():
-            if self.state.id in k:
-                exist_in_all_states = True
-
+        exist_in_all = any(self.state.id in k for k in all_objs.keys())
+        exist_in_all_states = any(self.state.id in k for k in all_state_objs.keys())
         self.assertTrue(exist_in_all)
         self.assertTrue(exist_in_all_states)
 
     def test_new_state(self):
         """... checks if new() functions after instantiation and save()"""
-        actual = False
         self.s_new = State(name="Illinois")
         self.s_new.save()
         db_objs = storage.all()
-        for obj in db_objs.values():
-            if obj.id == self.s_new.id:
-                actual = True
+        actual = any(obj.id == self.s_new.id for obj in db_objs.values())
         self.assertTrue(actual)
 
     def test_state_delete(self):
         state_id = self.state.id
         storage.delete(self.state)
         storage.save()
-        exist_in_all = False
-        for k in storage.all().keys():
-            if state_id in k:
-                exist_in_all = True
+        exist_in_all = any(state_id in k for k in storage.all().keys())
         self.assertFalse(exist_in_all)
 
 
@@ -220,14 +207,8 @@ class TestUserDBInstances(unittest.TestCase):
         """... checks if all() function returns newly created instance"""
         all_objs = storage.all()
         all_user_objs = storage.all('User')
-        exist_in_all = False
-        for k in all_objs.keys():
-            if self.user.id in k:
-                exist_in_all = True
-        exist_in_all_users = False
-        for k in all_user_objs.keys():
-            if self.user.id in k:
-                exist_in_all_users = True
+        exist_in_all = any(self.user.id in k for k in all_objs.keys())
+        exist_in_all_users = any(self.user.id in k for k in all_user_objs.keys())
         self.assertTrue(exist_in_all)
         self.assertTrue(exist_in_all_users)
 
@@ -236,10 +217,7 @@ class TestUserDBInstances(unittest.TestCase):
         storage.delete(self.user)
         self.user = None
         storage.save()
-        exist_in_all = False
-        for k in storage.all().keys():
-            if user_id in k:
-                exist_in_all = True
+        exist_in_all = any(user_id in k for k in storage.all().keys())
         self.assertFalse(exist_in_all)
 
 
@@ -273,15 +251,8 @@ class TestCityDBInstances(unittest.TestCase):
         all_objs = storage.all()
         all_city_objs = storage.all('City')
 
-        exist_in_all = False
-        for k in all_objs.keys():
-            if self.city.id in k:
-                exist_in_all = True
-        exist_in_all_city = False
-        for k in all_city_objs.keys():
-            if self.city.id in k:
-                exist_in_all_city = True
-
+        exist_in_all = any(self.city.id in k for k in all_objs.keys())
+        exist_in_all_city = any(self.city.id in k for k in all_city_objs.keys())
         self.assertTrue(exist_in_all)
         self.assertTrue(exist_in_all_city)
 
@@ -316,14 +287,8 @@ class TestCityDBInstancesUnderscore(unittest.TestCase):
         all_objs = storage.all()
         all_city_objs = storage.all('City')
 
-        exist_in_all = False
-        for k in all_objs.keys():
-            if self.city.id in k:
-                exist_in_all = True
-        exist_in_all_city = False
-        for k in all_city_objs.keys():
-            if self.city.id in k:
-                exist_in_all_city = True
+        exist_in_all = any(self.city.id in k for k in all_objs.keys())
+        exist_in_all_city = any(self.city.id in k for k in all_city_objs.keys())
         self.assertTrue(exist_in_all)
         self.assertTrue(exist_in_all_city)
 
@@ -374,15 +339,8 @@ class TestPlaceDBInstances(unittest.TestCase):
         all_objs = storage.all()
         all_place_objs = storage.all('Place')
 
-        exist_in_all = False
-        for k in all_objs.keys():
-            if self.place.id in k:
-                exist_in_all = True
-        exist_in_all_place = False
-        for k in all_place_objs.keys():
-            if self.place.id in k:
-                exist_in_all_place = True
-
+        exist_in_all = any(self.place.id in k for k in all_objs.keys())
+        exist_in_all_place = any(self.place.id in k for k in all_place_objs.keys())
         self.assertTrue(exist_in_all)
         self.assertTrue(exist_in_all_place)
 

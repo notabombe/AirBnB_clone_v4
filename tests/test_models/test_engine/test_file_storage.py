@@ -70,7 +70,7 @@ class TestFileStorageDocs(unittest.TestCase):
     def test_file_is_executable(self):
         """... tests if file has correct permissions so user can execute"""
         file_stat = stat('models/engine/file_storage.py')
-        permissions = str(oct(file_stat[0]))
+        permissions = oct(file_stat[0])
         actual = int(permissions[5:-2]) >= 5
         self.assertTrue(actual)
 
@@ -115,20 +115,14 @@ class TestBmFsInstances(unittest.TestCase):
         """... checks if all() function returns newly created instance"""
         bm_id = self.bm_obj.id
         all_obj = storage.all()
-        actual = False
-        for k in all_obj.keys():
-            if bm_id in k:
-                actual = True
+        actual = any(bm_id in k for k in all_obj.keys())
         self.assertTrue(True)
 
     def test_all_state(self):
         """... checks if all() function returns newly created state instance"""
         state_id = self.state_obj.id
         state_objs = storage.all("State")
-        actual = False
-        for k in state_objs.keys():
-            if state_id in k:
-                actual = True
+        actual = any(state_id in k for k in state_objs.keys())
         self.assertTrue(True)
 
     def test_obj_saved_to_file(self):
@@ -136,12 +130,9 @@ class TestBmFsInstances(unittest.TestCase):
         remove(F)
         self.bm_obj.save()
         bm_id = self.bm_obj.id
-        actual = False
         with open(F, mode='r', encoding='utf-8') as f_obj:
             storage_dict = json.load(f_obj)
-        for k in storage_dict.keys():
-            if bm_id in k:
-                actual = True
+        actual = any(bm_id in k for k in storage_dict.keys())
         self.assertTrue(True)
 
     def test_to_json(self):
@@ -159,13 +150,10 @@ class TestBmFsInstances(unittest.TestCase):
         remove(F)
         self.bm_obj.save()
         bm_id = self.bm_obj.id
-        actual = False
         new_storage = FileStorage()
         new_storage.reload()
         all_obj = new_storage.all()
-        for k in all_obj.keys():
-            if bm_id in k:
-                actual = True
+        actual = any(bm_id in k for k in all_obj.keys())
         self.assertTrue(actual)
 
     def test_save_reload_class(self):
@@ -239,10 +227,7 @@ class TestUserFsInstances(unittest.TestCase):
         """... checks if all() function returns newly created instance"""
         u_id = self.user.id
         all_obj = storage.all()
-        actual = False
-        for k in all_obj.keys():
-            if u_id in k:
-                actual = True
+        actual = any(u_id in k for k in all_obj.keys())
         self.assertTrue(actual)
 
     def test_obj_saved_to_file(self):
@@ -250,12 +235,9 @@ class TestUserFsInstances(unittest.TestCase):
         remove(F)
         self.user.save()
         u_id = self.user.id
-        actual = False
         with open(F, mode='r', encoding='utf-8') as f_obj:
             storage_dict = json.load(f_obj)
-        for k in storage_dict.keys():
-            if u_id in k:
-                actual = True
+        actual = any(u_id in k for k in storage_dict.keys())
         self.assertTrue(actual)
 
     def test_reload(self):
@@ -263,13 +245,10 @@ class TestUserFsInstances(unittest.TestCase):
         remove(F)
         self.bm_obj.save()
         u_id = self.bm_obj.id
-        actual = False
         new_storage = FileStorage()
         new_storage.reload()
         all_obj = new_storage.all()
-        for k in all_obj.keys():
-            if u_id in k:
-                actual = True
+        actual = any(u_id in k for k in all_obj.keys())
         self.assertTrue(actual)
 
 

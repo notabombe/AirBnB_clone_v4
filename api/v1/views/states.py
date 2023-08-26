@@ -16,7 +16,7 @@ def states_no_id():
     """
     if request.method == 'GET':
         all_states = storage.all('State')
-        all_states = list(obj.to_json() for obj in all_states.values())
+        all_states = [obj.to_json() for obj in all_states.values()]
         return jsonify(all_states)
 
     if request.method == 'POST':

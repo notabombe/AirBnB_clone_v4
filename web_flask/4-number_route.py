@@ -27,7 +27,7 @@ def text_var(text):
     """
         function to display text variable passed in
     """
-    return "C {}".format(text.replace("_", " "))
+    return f'C {text.replace("_", " ")}'
 
 
 @app.route('/python/<text>', strict_slashes=False)
@@ -35,14 +35,14 @@ def text_var_python(text="is cool"):
     """
         function to display text variable, with default "is cool"
     """
-    return "Python {}".format(text.replace("_", " "))
+    return f'Python {text.replace("_", " ")}'
 
 
 @app.route('/number/<int:n>', strict_slashes=False)
 def var_num(n):
-        """
+    """
              function to display a variable, but only if an int
         """
-        return "{} is a number".format(n)
+    return f"{n} is a number"
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=5000)

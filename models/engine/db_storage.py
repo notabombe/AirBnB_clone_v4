@@ -34,11 +34,8 @@ class DBStorage:
             creates the engine self.__engine
         """
         self.__engine = create_engine(
-            'mysql+mysqldb://{}:{}@{}/{}'.format(
-                os.environ.get('HBNB_MYSQL_USER'),
-                os.environ.get('HBNB_MYSQL_PWD'),
-                os.environ.get('HBNB_MYSQL_HOST'),
-                os.environ.get('HBNB_MYSQL_DB')))
+            f"mysql+mysqldb://{os.environ.get('HBNB_MYSQL_USER')}:{os.environ.get('HBNB_MYSQL_PWD')}@{os.environ.get('HBNB_MYSQL_HOST')}/{os.environ.get('HBNB_MYSQL_DB')}"
+        )
         if os.environ.get("HBNB_ENV") == 'test':
             Base.metadata.drop_all(self.__engine)
 
@@ -50,14 +47,14 @@ class DBStorage:
         if cls is not None:
             a_query = self.__session.query(DBStorage.CNC[cls])
             for obj in a_query:
-                obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+                obj_ref = f"{type(obj).__name__}.{obj.id}"
                 obj_dict[obj_ref] = obj
             return obj_dict
 
         for c in DBStorage.CNC.values():
             a_query = self.__session.query(c)
             for obj in a_query:
-                obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+                obj_ref = f"{type(obj).__name__}.{obj.id}"
                 obj_dict[obj_ref] = obj
         return obj_dict
 
@@ -93,8 +90,8 @@ class DBStorage:
         """
         for c in DBStorage.CNC.values():
             a_query = self.__session.query(c)
-            all_objs = [obj for obj in a_query]
-            for obj in range(len(all_objs)):
+            all_objs = list(a_query)
+            for _ in range(len(all_objs)):
                 to_delete = all_objs.pop(0)
                 to_delete.delete()
         self.save()
@@ -120,7 +117,7 @@ class DBStorage:
             retrieves one object based on class name and id
         """
         if cls and id:
-            fetch = "{}.{}".format(cls, id)
+            fetch = f"{cls}.{id}"
             all_obj = self.all(cls)
             return all_obj.get(fetch)
         return None

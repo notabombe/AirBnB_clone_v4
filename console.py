@@ -42,8 +42,7 @@ class HBNBCommand(cmd.Cmd):
         """
         default response for unknown commands
         """
-        print("This \"{}\" is invalid, run \"help\" "
-              "for more explanations".format(line))
+        print(f'This \"{line}\" is invalid, run \"help\" for more explanations')
 
     def emptyline(self):
         """
@@ -157,15 +156,11 @@ class HBNBCommand(cmd.Cmd):
                  City.create(name="Chicago")
         """
         arg = arg.split()
-        error = self.__class_err(arg)
-        if error:
+        if error := self.__class_err(arg):
             return
         k = arg[0]
         class_obj = CNC[k]
-        if len(arg) > 1:
-            d = self.__create_dict({}, arg[1:])
-        else:
-            d = {}
+        d = self.__create_dict({}, arg[1:]) if len(arg) > 1 else {}
         my_obj = class_obj(**d)
         my_obj.save()
         print(my_obj.id)
@@ -195,19 +190,13 @@ class HBNBCommand(cmd.Cmd):
         arg = arg.split()
         error = 0
         if arg:
-            error = self.__class_err(arg)
-            if error:
+            if error := self.__class_err(arg):
                 return
         print('[', end='')
         l = 0
-        if arg:
-            storage_objs = storage.all(arg[0])
-        else:
-            storage_objs = storage.all()
+        storage_objs = storage.all(arg[0]) if arg else storage.all()
         l = len(storage_objs)
-        c = 0
-        for v in storage_objs.values():
-            c += 1
+        for c, v in enumerate(storage_objs.values(), start=1):
             print(v, end=(', ' if c < l else ''))
         print(']')
 
@@ -244,18 +233,17 @@ class HBNBCommand(cmd.Cmd):
         """
         private: checks if the arguments input has a dictionary
         """
-        if '{' and '}' in arg:
-            l = arg.split('{')[1]
-            l = l.split(', ')
-            l = list(s.split(':') for s in l)
-            d = {}
-            for subl in l:
-                k = subl[0].strip('"\' {}')
-                v = subl[1].strip('"\' {}')
-                d[k] = v
-            return d
-        else:
+        if '}' not in arg:
             return None
+        l = arg.split('{')[1]
+        l = l.split(', ')
+        l = [s.split(':') for s in l]
+        d = {}
+        for subl in l:
+            k = subl[0].strip('"\' {}')
+            v = subl[1].strip('"\' {}')
+            d[k] = v
+        return d
 
     def __handle_update_err(self, arg):
         """
@@ -349,30 +337,27 @@ class HBNBCommand(cmd.Cmd):
         """counts the number objects in File Storage"""
         args = arg.split()
         storage_objs = storage.all()
-        count = 0
-        for k in storage_objs.keys():
-            if args[0] in k:
-                count += 1
+        count = sum(1 for k in storage_objs.keys() if args[0] in k)
         print(count)
 
     def __parse_exec(self, c, arg):
         """
         private: parses the input from .function() syntax, calls matched func
         """
-        CMD_MATCH = {
-            '.all': self.do_all,
-            '.count': self.__count,
-            '.show': self.do_show,
-            '.destroy': self.do_destroy,
-            '.update': self.do_update,
-            '.create': self.do_create,
-        }
-        if '(' and ')' in arg:
+        if ')' in arg:
             check = arg.split('(')
-            new_arg = "{} {}".format(c, check[1][:-1])
+            new_arg = f"{c} {check[1][:-1]}"
+            CMD_MATCH = {
+                '.all': self.do_all,
+                '.count': self.__count,
+                '.show': self.do_show,
+                '.destroy': self.do_destroy,
+                '.update': self.do_update,
+                '.create': self.do_create,
+            }
             for k, v in CMD_MATCH.items():
                 if k == check[0]:
-                    if ((',' or '"' in new_arg) and k != '.update'):
+                    if k != '.update':
                         new_arg = self.__rremove(new_arg, ['"', ','])
                     v(new_arg)
                     return

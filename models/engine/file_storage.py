@@ -35,11 +35,11 @@ class FileStorage:
             returns private attribute: __objects
         """
         if cls is not None:
-            new_objs = {}
-            for clsid, obj in FileStorage.__objects.items():
-                if type(obj).__name__ == cls:
-                    new_objs[clsid] = obj
-            return new_objs
+            return {
+                clsid: obj
+                for clsid, obj in FileStorage.__objects.items()
+                if type(obj).__name__ == cls
+            }
         else:
             return FileStorage.__objects
 
@@ -47,7 +47,7 @@ class FileStorage:
         """
             sets / updates in __objects the obj with key <obj class name>.id
         """
-        bm_id = "{}.{}".format(type(obj).__name__, obj.id)
+        bm_id = f"{type(obj).__name__}.{obj.id}"
         FileStorage.__objects[bm_id] = obj
 
     def save(self):
@@ -55,9 +55,10 @@ class FileStorage:
             serializes __objects to the JSON file (path: __file_path)
         """
         fname = FileStorage.__file_path
-        storage_d = {}
-        for bm_id, bm_obj in FileStorage.__objects.items():
-            storage_d[bm_id] = bm_obj.to_json(saving_file_storage=True)
+        storage_d = {
+            bm_id: bm_obj.to_json(saving_file_storage=True)
+            for bm_id, bm_obj in FileStorage.__objects.items()
+        }
         with open(fname, mode='w', encoding='utf-8') as f_io:
             json.dump(storage_d, f_io)
 
@@ -81,7 +82,7 @@ class FileStorage:
             deletes obj from __objects if it's inside
         """
         if obj:
-            obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+            obj_ref = f"{type(obj).__name__}.{obj.id}"
             all_class_objs = self.all(obj.__class__.__name__)
             if all_class_objs.get(obj_ref):
                 del FileStorage.__objects[obj_ref]
@@ -111,7 +112,7 @@ class FileStorage:
             retrieves one object based on class name and id
         """
         if cls and id:
-            fetch_obj = "{}.{}".format(cls, id)
+            fetch_obj = f"{cls}.{id}"
             all_obj = self.all(cls)
             return all_obj.get(fetch_obj)
         return None
